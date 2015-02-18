@@ -41,6 +41,7 @@ public class CentroidPicker {
 				int index = r.nextInt(data.size());
 				Data d = data.get(index);
 				if(j == d.getActualLable()){
+					//System.out.println("j "+j+"Vales "+data.get(index).getActualLable()+" Index Vale"+ index);
 					centroids.add(data.get(index).getFeatureVector());
 					j++;
 					break;
