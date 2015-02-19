@@ -3,13 +3,22 @@ package edu.umbc.cmsc678.hw1.utils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
+/***
+ * Picks centroid vectors
+ * @author Shrinivas
+ *
+ */
 public class CentroidPicker {
 
 	int centroidNum;
 	int vectorSize;
-
+	// Switch to Randomly sample k = 10 instances
+	public static final int RANDOM_CENTROIDS =1;
+	// Switch to Randomly choose an instance that represents each of the digits 
+	public static final int SPECIFIC_CENTROIDS=2;
+	
+	
 	public int getCentroidNum() {
 		return centroidNum;
 	}
@@ -19,12 +28,18 @@ public class CentroidPicker {
 	}
 
 	/**
-	 * Sets number of centroids and vector size
+	 * Sets number of centroids 
 	 */
 	public CentroidPicker(int centroids) {
 		centroidNum = centroids;
 	}
 
+	/***
+	 * Generates random centroids from data
+	 * @param data Data as feature vectors
+	 * @param type Switch 1 for Randomly sample or 2 for instance that represents each of the digits
+	 * @return list of centroids
+	 */
 	public List<double[]> getCentroids(List<Data> data, int type) {
 
 		Random r = new Random();

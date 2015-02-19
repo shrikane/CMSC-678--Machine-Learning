@@ -80,6 +80,9 @@ public class KmeansTest {
 		double [] centroid2 = {23,56,14,67}; //54
 		double [] centroid3 = {87,23,1,8}; //90
 		List<double[]> centroids = new ArrayList<double[]>(3);
+		centroids.add(centroid1);
+		centroids.add(centroid2);
+		centroids.add(centroid3);
 		assertEquals(true,k.isConverged(centroids,centroids));
 	}
 

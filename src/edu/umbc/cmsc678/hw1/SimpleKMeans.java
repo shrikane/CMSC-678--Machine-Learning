@@ -13,8 +13,21 @@ import java.util.Map.Entry;
 import edu.umbc.cmsc678.hw1.utils.CentroidPicker;
 import edu.umbc.cmsc678.hw1.utils.Data;
 
+/***
+ * Basic implementation of k-means clustering 
+ * @author Shrinivas
+ *
+ */
 public class SimpleKMeans {
 
+	static int itrCOunter = 0;
+
+	/***
+	 * get cluster id based on centroids. i have used euclidean distance to categorize the cluster 
+	 * @param centroids centroid vector for each cluster
+	 * @param vector feature vector from data set
+	 * @return
+	 */
 	int getClusterId(List<double[]> centroids, double[] vector) {
 		int centroidIndex = 0;
 		double distSum = 0;
@@ -39,6 +52,11 @@ public class SimpleKMeans {
 		return clusterIndex;
 	}
 
+	/***
+	 * get all vectors and update centroid vector by averaging out all data points in feature vector(s)
+	 * @param clusters cluster id and associated feature vectors
+	 * @return new set of centroids 
+	 */
 	List<double[]> updateCentoid(Map<Integer, List<Data>> clusters) {
 		List<double[]> centoids = new ArrayList<double[]>();
 
@@ -67,11 +85,21 @@ public class SimpleKMeans {
 
 	}
 
-	public Map<Integer, List<Data>> getCluster(List<Data> inputData) {
+	/***
+	 * 1. Generates centroids
+	 * 2. Classify each data point to cluster
+	 * 3. Check for convergence
+	 * @param inputData  input data as feature vectors
+	 * @param cnetroidType  1 if to select random data point 2 if to select specific point in cluster
+	 * @param clusterNum  number of k in k-means cluster
+	 * @return clusters as map of <cluster id,data vector(s)>
+	 */
+	public Map<Integer, List<Data>> getCluster(List<Data> inputData,
+			int cnetroidType, int clusterNum) {
 
 		Map<Integer, List<Data>> clusters = null;
-		List<double[]> centroids = new CentroidPicker(5).getCentroids(
-				inputData, 1);
+		List<double[]> centroids = new CentroidPicker(clusterNum)
+				.getCentroids(inputData, cnetroidType);
 		int loopIndex = 0;
 		boolean isToStop = false;
 		while (!isToStop) {
@@ -93,47 +121,21 @@ public class SimpleKMeans {
 				isToStop = true;
 			}
 			centroids = newCentroids;
-		
-
-			/*
-			 * System.err.println("Clusters are:"); for (Entry<Integer,
-			 * List<Data>> e : clusters.entrySet()) {
-			 * System.err.println(e.getKey()); for (Data data : e.getValue()) {
-			 * for (int p : data.getFeatureVector()) { System.out.print(p+"\t");
-			 * }
-			 * System.out.println(","+data.getActualLable()+","+e.getKey()+"\n"
-			 * );
-			 * 
-			 * } }
-			 * 
-			 * 
-			 * 
-			 * 
-			 * //
-			 */
-			// System.out.println(loopIndex);
 		}
-		System.err.println(loopIndex+",0,0");
+		// System.err.println(loopIndex+",0,0");
+		itrCOunter += loopIndex;
+		// System.out.println(itrCOunter+",0,0");
 		return clusters;
 	}
 
+	/***
+	 * As centroid vectors datatype is double thus if centroids don't change by 1 percent we say k- means is converged 
+	 * @param newCentroids old centroid vectors 
+	 * @param oldCentroids new centroid vectors
+	 * @return true if converged false else
+	 */
 	boolean isConverged(List<double[]> newCentroids, List<double[]> oldCentroids) {
 		int j = 0;
-
-		/*
-		 * for (int i = 0; i < newCentroids.size(); i++) { double [] old =
-		 * newCentroids.get(i); double [] newcen = oldCentroids.get(i); for (int
-		 * k = 0; k < old.length; k++) { System.out.print(old[k]+"\t"); }
-		 * System.out.println("\n");
-		 * 
-		 * 
-		 * for (int k = 0; k < old.length; k++) {
-		 * System.out.print(newcen[k]+"\t"); } System.out.println(
-		 * "\n-----------------------------------------------------------\n");
-		 * 
-		 * }
-		 */
-
 		for (double[] oldVector : oldCentroids) {
 			double[] newVector = newCentroids.get(j);
 			for (int i = 0; i < oldVector.length; i++) {
@@ -148,20 +150,25 @@ public class SimpleKMeans {
 		return true;
 	}
 
+	/***
+	 * 
+	 * @param args
+	 * @throws IOException
+	 * @throws InvalidAlgorithmParameterException
+	 */
 	public static void main(String[] args) throws IOException,
 			InvalidAlgorithmParameterException {
 		Data d = new Data();
+		int errRate = 0;
 		List<Data> testData = d.getData(args[0], args[1]);
-		
-		for(int i=0;i< 2; i++){
-		
-		System.out.println("Itration,"+i+",");
-		
-		Map<Integer, List<Data>> x = new SimpleKMeans().getCluster(testData);
-		// CentroidPicker c = new CentroidPicker(2);
-		// List<int[]> testData1 = c.getCentroids(testData,1 );
-		FileWriter fr = new FileWriter(new File(
-				"C:\\Users\\Shrinivas\\Desktop\\out.csv"));
+
+		// for(int i=0;i< 10; i++){
+
+		// System.out.println("Itration,"+i+",");
+
+		Map<Integer, List<Data>> x = new SimpleKMeans().getCluster(testData,
+				CentroidPicker.RANDOM_CENTROIDS, Integer.parseInt(args[2]));
+		FileWriter fr = new FileWriter(new File(args[3]));
 		List<Map<Integer, Integer>> outputStats = new ArrayList<Map<Integer, Integer>>();
 		Map<Integer, Integer> clusterStats = null;
 		for (Entry<Integer, List<Data>> e : x.entrySet()) {
@@ -171,18 +178,17 @@ public class SimpleKMeans {
 			for (Data data : e.getValue()) {
 				if (clusterStats.containsKey(data.getActualLable())) {
 					int freq = clusterStats.get(data.getActualLable());
-					clusterStats.put(data.getActualLable(),
-							freq + 1);
-					
+					clusterStats.put(data.getActualLable(), freq + 1);
+
 				} else {
 					clusterStats.put(data.getActualLable(), 1);
-					
+
 				}
-				/*
+
 				for (double p : data.getFeatureVector()) {
 					fr.append(p + ",");
 					// System.out.print(p+",");
-				}*/
+				}
 				// System.out.print(data.getActualLable()+","+e.getKey()+"\n");
 				fr.append(data.getActualLable() + "," + e.getKey() + "\n");
 			}
@@ -191,29 +197,33 @@ public class SimpleKMeans {
 		}
 
 		fr.close();
-		
+
 		int totalCorrctInstance = 0;
-		int totalInstance =0;
-		
+		int totalInstance = 0;
+
 		for (Map<Integer, Integer> map : outputStats) {
-			System.out.println(map.toString());
-			int maxIns =0;
-			int totCluster =0;
-			int cid =0;
+			 System.out.println(map.toString());
+			int maxIns = 0;
+			int totCluster = 0;
+			int cid = 0;
 			for (Entry<Integer, Integer> e : map.entrySet()) {
-				if(maxIns < e.getValue()){
+				if (maxIns < e.getValue()) {
 					maxIns = e.getValue();
 					cid = e.getKey();
 				}
 				totCluster += e.getValue();
 				totalInstance += e.getValue();
 			}
-			//System.err.println(cid+","+(totCluster-maxIns)+","+totCluster+","+(double)(((totCluster-maxIns)*100)/totCluster));
-			totalCorrctInstance +=maxIns;
+			// System.err.println(cid+","+(totCluster-maxIns)+","+totCluster+","+(double)(((totCluster-maxIns)*100)/totCluster));
+			totalCorrctInstance += maxIns;
 		}
-		
-		System.out.println("Total,"+totalCorrctInstance+","+(totalInstance-totalCorrctInstance)
-				+"," + totalInstance);
+
+		System.out.println("Total," + totalCorrctInstance + ","
+				+ (totalInstance - totalCorrctInstance) + "," + totalInstance);
+		errRate += (totalInstance - totalCorrctInstance);
+		 System.out.println("avg itr:"+(itrCOunter/10));
 	}
-	}
+	// System.out.println("tota Err Rate:"+ (errRate/10));
+	
+	// }
 }
