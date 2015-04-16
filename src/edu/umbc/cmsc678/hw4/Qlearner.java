@@ -1,59 +1,52 @@
 package edu.umbc.cmsc678.hw4;
+
 public class Qlearner {
-	
+
+	// default
 	double learningRate = 0.5;
 	double discountRate = 0.8;
-	
+	int episodes = 1000;
+
+	public Qlearner(double alpha, double gamma, double itrations) {
+		learningRate = alpha;
+		discountRate = gamma;
+		itrations = episodes;
+	}
 
 	public Qlearner() {
-		
+
 	}
-	
-	int episodes=1000;
-	
-	
-	
-	
-	void learn(){
-		int counter=0;
-		Qtable q= new Qtable(255, 4);
-		Reward r = new Reward(255, 4);
-		r.initRewards();
-		do{
-		int currentState=0;
-		int finalState=224;
-		int stepCounter=0;
-		do{
-			
-			int action= q.getNextAction(currentState);
-			int nextState = r.getNextState(currentState, action);
-			//System.out.println("Moving from "+currentState+"\t" + "to " + nextState + "\t Action Taken "+action);
-			
-			double discountedReward = q.getQmax(nextState) * discountRate;
-			double teampSum = discountedReward + r.getReward(currentState, action) - q.getQval(currentState, action);		
-			double value = q.getQval(currentState, action) + (learningRate * teampSum);
-					//r.getReward(currentState, action) + (int)(discountRate * q.getQmax());
-					// q.getQval(currentState, action) + (int) ( learningRate *(r.getReward(currentState, action) + (discountRate * q.getQmax(r.getNextState(currentState, action)))- q.getQval(currentState, action)));
-		//	System.out.println("val is "+value);
-			q.updateQtable(currentState, action, value);
-			currentState = nextState;
-			//System.out.print("Moving to "+currentState+"\t" );
-			//System.out.println();
-		//	Scanner in = new Scanner(System.in);
-		//	in.next();
-			stepCounter++;
-		}while(finalState != currentState);
-		System.err.println(counter+","+stepCounter);
+
+	void learn(int States, int maxActionPerSatet, int percentNoise,
+			int startState, int finalState) {
+		int counter = 0;
+		Qtable q = new Qtable(States, maxActionPerSatet, percentNoise);
+		Reward r = new Reward(States, maxActionPerSatet);
+		r.initRewards(States);
+		do {
+			int currentState = startState;
+			int stepCounter = 0;
+			do {
+				int action = q.getNextAction(currentState);
+				int nextState = r.getNextState(currentState, action);
+				double discountedReward = q.getQmax(nextState) * discountRate;
+				double teampSum = discountedReward
+						+ r.getReward(currentState, action)
+						- q.getQval(currentState, action);
+				double value = q.getQval(currentState, action)
+						+ (learningRate * teampSum);
+				q.setQtableEntry(currentState, action, value);
+				currentState = nextState;
+				stepCounter++;
+			} while (finalState != currentState);
+			System.err.println(counter + "," + stepCounter);
 			counter++;
-		}while(counter <= episodes);
-		
-		
-		
-		
+		} while (counter <= episodes);
+
 	}
-	
+
 	public static void main(String[] args) {
-		new Qlearner().learn();
+		new Qlearner().learn(225, 4, 10, 0, 224);
 	}
 
 }

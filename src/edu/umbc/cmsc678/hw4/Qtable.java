@@ -1,27 +1,51 @@
 package edu.umbc.cmsc678.hw4;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 public class Qtable {
 
 	double[][] qTable;
+	Set<Integer> randomize;
+	int counter;
+	int noiseFactor;
 	
-	 class OptimalQTableEntry{
-	 int action;
-	 double value;
-	}
-	
-	public Qtable(int state,int maxActions) {
+	/***
+	 * Generates Qtable from random non zero values 
+	 * @param state - maximum possible states
+	 * @param maxActions - maximum actions per state 
+	 * @param percentNoise - noise in selecting state
+	 */
+	public Qtable(int state,int maxActions,int percentNoise) {
 		qTable = new double [state][maxActions];
 		Random r = new Random();
 		for (int i=0;i<state;i++) {
 			for(int j=0;j<maxActions;j++){
 				qTable[i][j] = r.nextInt(100);
 			}
-			
+		}
+		noiseFactor = Math.round((percentNoise/10));
+		getRandomActionsId(noiseFactor);
+	}
+	
+	/**
+	 * To add noise in state selection
+	 * @param noiseFactor
+	 */
+	void getRandomActionsId(int noiseFactor){
+		randomize =  new HashSet<Integer>();
+		Random r = new Random();
+		for(int i=0;i<noiseFactor;i++){
+			randomize.add(r.nextInt(10));
 		}
 	}
 	
+	/**
+	 * if all values in Q table are equal select random
+	 * @param qTable2
+	 * @return
+	 */
 	boolean isAllQvalueEqual(double[] qTable2){
 		double startvalue=qTable2[0];
 		for (int i=1;i<qTable2.length;i++) {
@@ -32,22 +56,27 @@ public class Qtable {
 		return true;
 	}
 	
+	/**
+	 * gives next action based on noise probability
+	 * @param state    current state
+	 * @return action id  {@link Constants}
+	 */
 	int getNextAction(int state){
-		//return new Random().nextInt(qTable[state].length);
-		//OptimalQTableEntry e = getOptimalEntry(state);
-		if(isAllQvalueEqual(qTable[state])){
-			
+		counter = (counter +1)%10;
+		if(isAllQvalueEqual(qTable[state])){	
 			return new Random().nextInt(qTable[state].length);
 		}else{
+			if(randomize.contains(counter)){
+				if(counter ==0){
+					getRandomActionsId(noiseFactor);
+				}
+				return new Random().nextInt(qTable[state].length);
+			}else{
+				
 			
 			int index =0;
 			double MaxVal = Double.MIN_VALUE;
 			double [] testArray = qTable[state];
-			/*
-			System.out.println();
-			for (double d : testArray) {
-				System.out.print(d+"\t");
-			}*/
 			for (int i=0 ;i< testArray.length ; i++) {
 				if(testArray[i] > MaxVal){
 					MaxVal =testArray[i];
@@ -55,20 +84,37 @@ public class Qtable {
 				}
 			}
 			return index;
+			}
 		}
 		
 	}
 	
+	/**
+	 * returns Q value for specific state and action
+	 * @param state
+	 * @param action
+	 * @return value from Q table
+	 */
 	double getQval(int state,int action){
 		return qTable[state][action];
 	}
 	
-	void updateQtable(int state,int action,double value){
+	/**
+	 * Sets value in Qtable
+	 * @param state
+	 * @param action
+	 * @param value
+	 */
+	void setQtableEntry(int state,int action,double value){
 		qTable[state][action]= value;
 	}
 	
+	/**
+	 * returns maximum possible Qvalue for specific state
+	 * @param state
+	 * @return
+	 */
 	double getQmax(int state){
-		//OptimalQTableEntry e = getOptimalEntry(state);
 		double MaxVal = Double.MIN_VALUE;
 		double [] testArray = qTable[state];
 		for (double d : testArray) {
@@ -78,27 +124,5 @@ public class Qtable {
 		}
 		return MaxVal;
 	}
-	
-	
-	/*
-	OptimalQTableEntry getOptimalEntry(int state){
-		OptimalQTableEntry e = new OptimalQTableEntry();
-		int index =0;
-		double MaxVal = qTable[state][0];
-		double currentQVal ;
-		for(int i=0;i<qTable[state].length;i++){
-			currentQVal = qTable[state][i];
-			if(currentQVal > MaxVal){
-				index=i;
-				MaxVal = currentQVal;
-			}
-		}
-		
-		e.action =index;
-		e.value = MaxVal;
-		//System.out.println("returned Q vals "+e.value);
-		return e;
-	}
-	*/
-	
+
 }

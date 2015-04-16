@@ -1,5 +1,10 @@
 package edu.umbc.cmsc678.hw4;
 
+/***
+ * 
+ * @author Shrinivas
+ * Constant value class defining actions 
+ */
 public class Constants {
 
 	public static final int LEFT =0;
