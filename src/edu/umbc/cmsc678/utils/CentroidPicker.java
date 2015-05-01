@@ -1,4 +1,4 @@
-package edu.umbc.cmsc678.hw1.utils;
+package edu.umbc.cmsc678.utils;
 
 import java.util.ArrayList;
 import java.util.List;
