@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import edu.umbc.cmsc678.hw1.utils.CentroidPicker;
-import edu.umbc.cmsc678.hw1.utils.Data;
+import edu.umbc.cmsc678.utils.CentroidPicker;
+import edu.umbc.cmsc678.utils.Data;
 
 /***
  * Basic implementation of k-means clustering 

@@ -10,7 +10,7 @@ import java.util.Vector;
 
 import org.junit.Test;
 
-import edu.umbc.cmsc678.hw1.utils.Data;
+import edu.umbc.cmsc678.utils.Data;
 
 public class KmeansTest {
 
