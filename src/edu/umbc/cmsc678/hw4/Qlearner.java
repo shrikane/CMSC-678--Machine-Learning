@@ -17,10 +17,10 @@ public class Qlearner {
 
 	}
 
-	void learn(int States, int maxActionPerSatet, int percentNoise,
+	void learn(int States, int maxActionPerSatet, int percentNoise,double d,
 			int startState, int finalState) {
 		int counter = 0;
-		Qtable q = new Qtable(States, maxActionPerSatet, percentNoise);
+		Qtable q = new Qtable(States, maxActionPerSatet, percentNoise,d);
 		Reward r = new Reward(States, maxActionPerSatet);
 		r.initRewards(States);
 		do {
@@ -46,7 +46,7 @@ public class Qlearner {
 	}
 
 	public static void main(String[] args) {
-		new Qlearner().learn(225, 4, 10, 0, 224);
+		new Qlearner().learn(225, 4, 0,0.1, 0, 224);
 	}
 
 }

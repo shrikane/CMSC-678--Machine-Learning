@@ -9,7 +9,10 @@ public class Qtable {
 	double[][] qTable;
 	Set<Integer> randomize;
 	int counter;
+	int counter1;
 	int noiseFactor;
+	int ExplorationFactor;
+	Set<Integer> explore;
 	
 	/***
 	 * Generates Qtable from random non zero values 
@@ -17,7 +20,7 @@ public class Qtable {
 	 * @param maxActions - maximum actions per state 
 	 * @param percentNoise - noise in selecting state
 	 */
-	public Qtable(int state,int maxActions,int percentNoise) {
+	public Qtable(int state,int maxActions,int percentNoise,double exploreFactor) {
 		qTable = new double [state][maxActions];
 		Random r = new Random();
 		for (int i=0;i<state;i++) {
@@ -26,19 +29,24 @@ public class Qtable {
 			}
 		}
 		noiseFactor = Math.round((percentNoise/10));
-		getRandomActionsId(noiseFactor);
+		ExplorationFactor = Math.round((percentNoise*10));
+		randomize = getRandomActionsId(noiseFactor);
+		explore = getRandomActionsId(ExplorationFactor);
+		
 	}
 	
 	/**
 	 * To add noise in state selection
 	 * @param noiseFactor
+	 * @return 
 	 */
-	void getRandomActionsId(int noiseFactor){
-		randomize =  new HashSet<Integer>();
+	HashSet<Integer> getRandomActionsId(int noiseFactor){
+		HashSet<Integer> a =  new HashSet<Integer>();
 		Random r = new Random();
 		for(int i=0;i<noiseFactor;i++){
-			randomize.add(r.nextInt(10));
+			a.add(r.nextInt(10));
 		}
+		return a;
 	}
 	
 	/**
@@ -62,8 +70,11 @@ public class Qtable {
 	 * @return action id  {@link Constants}
 	 */
 	int getNextAction(int state){
-		counter = (counter +1)%10;
-		if(isAllQvalueEqual(qTable[state])){	
+		counter1 = (counter1 +1)%10;
+		if(explore.contains(counter)){
+			if(counter1 ==0){
+				explore =getRandomActionsId((int)(ExplorationFactor*0.99));
+			}
 			return new Random().nextInt(qTable[state].length);
 		}else{
 			if(randomize.contains(counter)){
