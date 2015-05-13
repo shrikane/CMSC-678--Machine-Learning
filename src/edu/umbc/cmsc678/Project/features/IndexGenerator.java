@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Map.Entry;
+
 import edu.umbc.cmsc678.Project.analysis.Analyzer;
 import edu.umbc.cmsc678.Project.analysis.CharNGramAnalyzer;
 
@@ -165,5 +166,10 @@ public class IndexGenerator {
 		System.out.println(ig.dict.size());
 	}
 	
-	
+	public static void main(String[] args) throws IOException {
+		IndexGenerator ig = new IndexGenerator();
+		Analyzer analyzer = new CharNGramAnalyzer(2) ;
+				//analyzer.getAnalyzer(2);
+		ig.buildIndex(args[0], args[1], analyzer);
+	}
 }

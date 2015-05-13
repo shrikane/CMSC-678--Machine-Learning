@@ -18,6 +18,8 @@ public class Driver {
 	
 	static void getReport(String impuFIle,String outFile,int runSize,int similarity,Analyzer analyzer,int clusterSize) throws InvalidAlgorithmParameterException, IOException{
 		SimpleKMeans clustering = new SimpleKMeans();
+		
+		
 		for(int j=1;j<5;j++){
 			double acc =0;
 			IndexGenerator ig = new IndexGenerator();
@@ -26,7 +28,11 @@ public class Driver {
 			System.out.println("Size: "+j);
 		for(int i=1;i< runSize;i++){		
 			//System.out.println("Index built");
+			try{
 			acc += clustering.BuildClusters(outFile, clusterSize, "out1.txt",similarity,false);
+			}catch(Exception ex){
+				
+			}
 			//System.out.println("cluster built");
 			//ig.buildIndex(args[2], args[1], new TokenNGramAnalyzer(i));
 			//clustering.BuildClusters(args[1], 4, "out1.txt",SimpleKMeans.DISTANCE_SIMILARITY,true);
@@ -34,6 +40,8 @@ public class Driver {
 		}
 		System.out.println("avg acc"+(double)acc/runSize);
 		}
+			
+		
 	}
 	
 	
@@ -51,13 +59,13 @@ public class Driver {
 		String [] filePaths = { 
 				"C:\\Users\\Shrinivas\\Desktop\\ML Project codes\\TICPP-2nd-ed-Vol-one\\Code" ,
 				"C:\\Users\\Shrinivas\\Desktop\\ML Project codes\\Cpp Auth2\\Code",
-				"C:\\Users\\Shrinivas\\Desktop\\ML Project codes\\Java - Thining in java",
+				"C:\\Users\\Shrinivas\\Desktop\\ML Project codes\\TiJ\\code",		
 				};
 		//IndexGenerator ig = new IndexGenerator();
 		LabelCreater lc = new LabelCreater();
 		lc.getLables(filePaths);
 		int clusterSize =3;
-		int runSize =1;
+		int runSize = 150;
 		System.out.println("FIlePath creted");
 
 		System.out.println("cosine token");

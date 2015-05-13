@@ -215,7 +215,7 @@ public class SimpleKMeans {
 		Data d = new Data();
 		int errRate = 0;
 		List<Data> testData = d.getDataLables(vectorInputFile);
-		/* get file sizes
+		// get file sizes
 		HashMap< Integer, Integer> h = new HashMap<>();
 		
 		for (Data data : testData) {
@@ -226,8 +226,8 @@ public class SimpleKMeans {
 				h.put(data.getActualLable(), x+1);
 			}
 		}
-		*/
-		//System.out.println("Distri:"+h);
+		
+		System.out.println("Distri:"+h);
 
 		// for(int i=0;i< 10; i++){
 
