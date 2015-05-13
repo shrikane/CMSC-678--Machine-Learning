@@ -13,13 +13,18 @@ import java.util.Map.Entry;
 import edu.umbc.cmsc678.utils.CentroidPicker;
 import edu.umbc.cmsc678.utils.Data;
 
+
+
+
 /***
  * Basic implementation of k-means clustering 
  * @author Shrinivas
  *
  */
 public class SimpleKMeans {
-
+	public static final int COSINE_SIMILARITY = 1;
+	public static final int DISTANCE_SIMILARITY = 2;
+	
 	static int itrCOunter = 0;
 	List<double[]> centroids;
 	
@@ -135,7 +140,7 @@ public class SimpleKMeans {
 	 * @return clusters as map of <cluster id,data vector(s)>
 	 */
 	public Map<Integer, List<Data>> getCluster(List<Data> inputData,
-			int cnetroidType, int clusterNum) {
+			int cnetroidType, int clusterNum,int distanceMeausre) {
 
 		Map<Integer, List<Data>> clusters = null;
 		List<double[]> centroid = centroids == null ? new CentroidPicker(clusterNum)
@@ -146,7 +151,14 @@ public class SimpleKMeans {
 
 			clusters = new HashMap<Integer, List<Data>>();
 			for (Data d : inputData) {
-				int cid = getClusterIdByCosineSimilarity(centroid, d.getFeatureVector());
+				int cid=0;
+				if(distanceMeausre == COSINE_SIMILARITY){
+				cid = getClusterIdByCosineSimilarity(centroid, d.getFeatureVector());
+				}
+				if(distanceMeausre == DISTANCE_SIMILARITY){
+				 cid = getClusterId(centroid, d.getFeatureVector());
+				}
+				
 				List<Data> clusteredData = clusters.get(cid);
 				if (clusteredData == null) {
 					clusteredData = new ArrayList<Data>();
@@ -198,19 +210,32 @@ public class SimpleKMeans {
 	 * @throws IOException
 	 * @throws InvalidAlgorithmParameterException
 	 */
-	public static void main(String[] args) throws IOException,
+	public double BuildClusters(String vectorInputFile,int NumCluster,String ClusterdOutpouFIlePath,int similarityMeasure,boolean isTest) throws IOException,
 			InvalidAlgorithmParameterException {
 		Data d = new Data();
 		int errRate = 0;
-		List<Data> testData = d.getDataLables(args[0]);
+		List<Data> testData = d.getDataLables(vectorInputFile);
+		/* get file sizes
+		HashMap< Integer, Integer> h = new HashMap<>();
+		
+		for (Data data : testData) {
+			Integer x = h.get(data.getActualLable());
+			if(x == null){
+				h.put(data.getActualLable(), 1);
+			}else{
+				h.put(data.getActualLable(), x+1);
+			}
+		}
+		*/
+		//System.out.println("Distri:"+h);
 
 		// for(int i=0;i< 10; i++){
 
 		// System.out.println("Itration,"+i+",");
 
 		Map<Integer, List<Data>> x = new SimpleKMeans().getCluster(testData,
-				CentroidPicker.SPECIFIC_CENTROIDS, Integer.parseInt(args[2]));
-		FileWriter fr = new FileWriter(new File(args[3]));
+				CentroidPicker.SPECIFIC_CENTROIDS, NumCluster,similarityMeasure);
+		FileWriter fr = new FileWriter(new File(ClusterdOutpouFIlePath));
 		List<Map<Integer, Integer>> outputStats = new ArrayList<Map<Integer, Integer>>();
 		Map<Integer, Integer> clusterStats = null;
 		for (Entry<Integer, List<Data>> e : x.entrySet()) {
@@ -243,7 +268,7 @@ public class SimpleKMeans {
 		int totalInstance = 0;
 
 		for (Map<Integer, Integer> map : outputStats) {
-			System.out.println(map.toString());
+		//	System.out.println(map.toString());
 			int maxIns = 0;
 			int totCluster = 0;
 			int cid = 0;
@@ -259,11 +284,13 @@ public class SimpleKMeans {
 			totalCorrctInstance += maxIns;
 		}
 
-		System.out.println("Total," + totalCorrctInstance + ","
-				+ (totalInstance - totalCorrctInstance) + "," + totalInstance);
-		errRate += (totalInstance - totalCorrctInstance);
+	//	System.out.println("Total," + totalCorrctInstance + ","
+	//			+ (totalInstance - totalCorrctInstance) + "," + totalInstance);
+	//	errRate += (totalInstance - totalCorrctInstance);
+		if(isTest)
 		System.out.println("Correct Classification"+(double)((totalCorrctInstance*100)/totalInstance));
-		 System.out.println("avg itr:"+(itrCOunter/10));
+		// System.out.println("avg itr:"+(itrCOunter/10));
+		return (double)((totalCorrctInstance*100)/totalInstance);
 	}
 	//System.out.println("tota Err Rate:"+ (errRate/10));
 	

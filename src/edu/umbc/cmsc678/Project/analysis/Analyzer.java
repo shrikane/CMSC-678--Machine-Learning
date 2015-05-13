@@ -8,4 +8,6 @@ public abstract class Analyzer {
 		
 	}
 	public abstract List<String> getTokens(String input);
+	public abstract Analyzer getAnalyzer(int size);
 }
+ 

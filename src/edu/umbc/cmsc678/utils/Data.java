@@ -210,7 +210,7 @@ public class Data {
 					for (int i=0,j=1;j<rowEntries.length;i++,j++) {
 						lineEntries[i] = Double.parseDouble(rowEntries[j]);
 					}
-					System.out.println(rowEntries[0]);
+					//System.out.println(rowEntries[0]);
 					inputData.add(new Data(lineEntries,LabelMapping.get(rowEntries[0])));
 				}
 			}

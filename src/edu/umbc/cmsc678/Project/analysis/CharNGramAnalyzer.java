@@ -12,6 +12,33 @@ public class CharNGramAnalyzer extends Analyzer{
 	}
 	
 	
+	public Analyzer getAnalyzer(int size){
+		return new CharNGramAnalyzer(size);
+	}
+	
+	
+	
+	public  List<String> getTokens(String str) {
+        List<String> ngrams = new ArrayList<String>();
+        String[] words = str.split(" ");
+        for (int i = 0; i < words.length - tokenize + 1; i++)
+            ngrams.add(concat(words, i, i+tokenize));
+        return ngrams;
+    }
+
+    public String concat(String[] words, int start, int end) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = start; i < end; i++)
+            sb.append((i > start ? " " : "") + words[i]);
+        return sb.toString();
+    }
+	
+	
+	
+	
+	
+	
+	
 	private static void addNgrams(final int size, final String input, 
 		    final List<String> list)
 		{
@@ -20,6 +47,7 @@ public class CharNGramAnalyzer extends Analyzer{
 		        list.add(input.substring(i, i + size));
 		}
 
+	/*
 		public List<String> generateNGrams(final String input, final int minSize, 
 		    final int maxSize)
 		{
@@ -49,10 +77,10 @@ public List<String> getTokens(String input){
 			}
 			//System.out.println(sb.toString());
 			tokens.add(sb.toString());
-		}*/
+		
 		return tokens;
 	}
-	
+	*/
 	
 	public static void main(String[] args) {
 		List< String> tokens  = new CharNGramAnalyzer(3).getTokens("xyzzyspoon1 abc");
@@ -60,5 +88,11 @@ public List<String> getTokens(String input){
 			System.out.println(string);
 		}
 	}
+
+
+	
+
+
+	
 
 }

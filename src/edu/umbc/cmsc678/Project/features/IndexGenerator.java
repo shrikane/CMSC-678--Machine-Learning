@@ -19,7 +19,7 @@ import edu.umbc.cmsc678.Project.analysis.CharNGramAnalyzer;
 public class IndexGenerator {
 
 	private Map<String,Integer> dict;
-	private static final int Doc_prune =1;
+	private static  Integer Doc_prune;
 
 	public IndexGenerator() {
 		dict = new HashMap<String, Integer>();
@@ -28,6 +28,7 @@ public class IndexGenerator {
 
 	public Map<String, Map<String, Double>> getTfIdf(Map<String,Map<String,Double>> freqMatrix)
 	{
+		Doc_prune = (freqMatrix.size() * 1) /100; 
 		Map<String,Map<String,Double>> tfIdfMatrix = new HashMap<String, Map<String,Double>>();
 		for (Entry<String, Map<String, Double>> e : freqMatrix.entrySet() ) {
 			Map<String, Double> doc = e.getValue();
@@ -51,7 +52,7 @@ public class IndexGenerator {
 					}
 					else{
 						//* Math.log(freqMatrix.size()/e1.getValue())
-						tfIdfDoc.put(e1.getKey(), tfFreq   );
+						tfIdfDoc.put(e1.getKey(), tfFreq);
 					}
 			}
 			tfIdfMatrix.put(e.getKey(), tfIdfDoc);
@@ -135,7 +136,7 @@ public class IndexGenerator {
 		//	System.out.println("FileName,"+e.getKey().replaceAll("\r\n", " NewLines ")+",");
 			j++;
 		}
-		System.err.println(j);
+	//	System.err.println(j);
 	//	bf.append("\n");
 		//System.out.println(bf.toString());
 	//	fw.append("FileName,"+bf.toString()+"\n");
@@ -144,7 +145,7 @@ public class IndexGenerator {
 
 
 		for (Entry<String, Map<String, Double>> e : tfMatrix.entrySet()) {
-			System.out.println("File Name"+e.getKey()+","+ig.dict.size()+","+e.getValue().size());
+			//System.out.println("File Name"+e.getKey()+","+ig.dict.size()+","+e.getValue().size());
 			Map<String, Double> docData = e.getValue();
 			bf = new StringBuffer();
 			int i=0;
@@ -154,18 +155,15 @@ public class IndexGenerator {
 				bf.append(docData.get(e2.getKey())+",");
 				i++;
 			}
-			System.out.println(i);
+		//	System.out.println(i);
 			bf.append("\n");
 			fw.append(bf.toString());
 			fw.flush();
 			//System.out.println(e.getValue());
 		}
 		fw.close();
+		System.out.println(ig.dict.size());
 	}
 	
-	public static void main(String[] args) throws IOException {
-		new IndexGenerator().buildIndex(args[0], args[1], new CharNGramAnalyzer(2));
-		
-	}
-
+	
 }

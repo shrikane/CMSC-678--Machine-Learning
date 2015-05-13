@@ -39,6 +39,12 @@ public List<String> getTokens(String input){
 		}
 		return tokens;
 	}
+
+
+@Override
+public Analyzer getAnalyzer(int size) {
+	return new TokenNGramAnalyzer(size);
+}
 	
 	/*
 	public static void main(String[] args) throws IOException {
